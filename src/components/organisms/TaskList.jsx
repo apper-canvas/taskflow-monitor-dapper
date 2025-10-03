@@ -13,9 +13,9 @@ const TaskList = ({ tasks, filter, onToggleComplete, onDelete }) => {
       className="space-y-3"
     >
       <AnimatePresence mode="popLayout">
-        {tasks.map((task) => (
+{tasks.map((task) => (
           <TaskCard
-            key={task.id}
+            key={task.Id}
             task={task}
             onToggleComplete={onToggleComplete}
             onDelete={onDelete}

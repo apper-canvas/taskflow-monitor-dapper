@@ -9,12 +9,18 @@ import TaskStats from "@/components/organisms/TaskStats";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import taskService from "@/services/taskService";
+import { useSelector, useDispatch } from 'react-redux';
+import { useContext } from 'react';
+import { AuthContext } from '../../App';
 
 const TasksPage = () => {
-  const [tasks, setTasks] = useState([]);
+const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { logout } = useContext(AuthContext);
 
   const loadTasks = async () => {
     try {
@@ -43,20 +49,20 @@ const TasksPage = () => {
     }
   };
 
-  const handleToggleComplete = async (taskId) => {
-    const task = tasks.find(t => t.id === taskId);
+const handleToggleComplete = async (taskId) => {
+    const task = tasks.find(t => t.Id === taskId);
     if (!task) return;
 
     try {
       const updated = await taskService.update(taskId, { 
-        completed: !task.completed 
+        completed: !task.completed_c 
       });
       
       setTasks(prev => prev.map(t => 
-        t.id === taskId ? updated : t
+        t.Id === taskId ? updated : t
       ));
 
-      if (updated.completed) {
+      if (updated.completed_c) {
         toast.success("Task completed! 🎉");
       }
     } catch (err) {
@@ -64,10 +70,10 @@ const TasksPage = () => {
     }
   };
 
-  const handleDelete = async (taskId) => {
+const handleDelete = async (taskId) => {
     try {
       await taskService.delete(taskId);
-      setTasks(prev => prev.filter(t => t.id !== taskId));
+      setTasks(prev => prev.filter(t => t.Id !== taskId));
       toast.success("Task deleted");
     } catch (err) {
       toast.error("Failed to delete task");
@@ -79,31 +85,35 @@ const TasksPage = () => {
       return;
     }
 
-    try {
+try {
       const result = await taskService.clearCompleted();
-      setTasks(prev => prev.filter(t => !t.completed));
+      setTasks(prev => prev.filter(t => !t.completed_c));
       toast.success(`${result.count} completed tasks cleared`);
     } catch (err) {
       toast.error("Failed to clear completed tasks");
     }
   };
 
-  const getFilteredTasks = () => {
+const getFilteredTasks = () => {
     switch (filter) {
       case "active":
-        return tasks.filter(t => !t.completed);
+        return tasks.filter(t => !t.completed_c);
       case "completed":
-        return tasks.filter(t => t.completed);
+        return tasks.filter(t => t.completed_c);
       default:
         return tasks;
     }
   };
 
-  const taskCounts = {
+const taskCounts = {
     all: tasks.length,
-    active: tasks.filter(t => !t.completed).length,
-    completed: tasks.filter(t => t.completed).length
+    active: tasks.filter(t => !t.completed_c).length,
+    completed: tasks.filter(t => t.completed_c).length
   };
+
+  if (!isAuthenticated) {
+    return <div className="loading flex items-center justify-center p-6 h-full w-full"><svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg></div>;
+  }
 
   if (loading) {
     return (
@@ -145,6 +155,19 @@ const TasksPage = () => {
         </motion.div>
 
         <div className="space-y-6">
+<div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">Welcome, {user?.firstName || 'User'}</h1>
+              <p className="text-slate-600">Manage your tasks efficiently</p>
+            </div>
+            <button
+              onClick={logout}
+              className="px-4 py-2 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
+
           <TaskForm onTaskAdded={handleAddTask} />
 
           <FilterTabs

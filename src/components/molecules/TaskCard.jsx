@@ -22,11 +22,11 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
     }
   };
 
-  const config = priorityConfig[task.priority] || priorityConfig.medium;
+const config = priorityConfig[task.priority_c] || priorityConfig.medium;
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      onDelete(task.id);
+onDelete(task.Id);
     }
   };
 
@@ -41,21 +41,21 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
         "bg-white rounded-xl shadow-card hover:shadow-card-hover transition-all duration-200",
         "border-l-4",
         config.color,
-        task.completed && "opacity-60"
+task.completed_c && "opacity-60"
       )}
     >
       <div className="p-4 flex items-start gap-4">
         <button
-          onClick={() => onToggleComplete(task.id)}
+onClick={() => onToggleComplete(task.Id)}
           className={cn(
             "flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200",
             "hover:scale-110 active:scale-95",
-            task.completed
+task.completed_c
               ? "bg-success border-success"
               : "border-slate-300 hover:border-primary"
           )}
         >
-          {task.completed && (
+{task.completed_c && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -70,9 +70,9 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
           <div className="flex items-start justify-between gap-3 mb-2">
             <h3 className={cn(
               "text-lg font-semibold text-slate-900 transition-all duration-300",
-              task.completed && "line-through text-slate-500"
+task.completed_c && "line-through text-slate-500"
             )}>
-              {task.title}
+              {task.title_c}
             </h3>
             <span className={cn(
               "px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap",
@@ -82,30 +82,30 @@ const TaskCard = ({ task, onToggleComplete, onDelete }) => {
             </span>
           </div>
 
-          {task.description && (
+{task.description_c && (
             <p className={cn(
               "text-slate-600 text-sm mb-3 transition-all duration-300",
-              task.completed && "text-slate-400"
+              task.completed_c && "text-slate-400"
             )}>
-              {task.description}
+              {task.description_c}
             </p>
           )}
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-slate-500">
+<div className="flex items-center gap-2 text-xs text-slate-500">
               <ApperIcon name="Clock" size={14} />
               <span>
-                {new Date(task.createdAt).toLocaleDateString("en-US", {
+                {new Date(task.created_at_c).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric"
                 })}
               </span>
-              {task.completed && task.completedAt && (
+              {task.completed_c && task.completed_at_c && (
                 <>
                   <span>•</span>
                   <ApperIcon name="CheckCircle2" size={14} className="text-success" />
                   <span>
-                    {new Date(task.completedAt).toLocaleDateString("en-US", {
+                    {new Date(task.completed_at_c).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric"
                     })}

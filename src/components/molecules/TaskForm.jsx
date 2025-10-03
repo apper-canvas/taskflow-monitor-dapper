@@ -11,6 +11,7 @@ const TaskForm = ({ onTaskAdded }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [tags, setTags] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleSubmit = (e) => {
@@ -21,10 +22,11 @@ const TaskForm = ({ onTaskAdded }) => {
       return;
     }
 
-    const taskData = {
-      title: title.trim(),
-      description: description.trim(),
-      priority
+const taskData = {
+      title_c: title.trim(),
+      description_c: description.trim(),
+      priority_c: priority,
+      Tags: tags.trim()
     };
 
     onTaskAdded(taskData);
